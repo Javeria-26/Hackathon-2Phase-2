@@ -1,0 +1,447 @@
+openapi: 3.0.3
+info:
+  title: Todo API
+  description: |
+    Secure REST API for user-scoped todo management with JWT authentication.
+
+    ## Authentication
+    All endpoints require a valid JWT token from Better Auth in the Authorization header:
+    ```
+    Authorization: Bearer <jwt_token>
+    ```
+
+    ## User Isolation
+    All operations are scoped to the authenticated user. Users can only access their own todos.
+
+  version: 1.0.0
+  contact:
+    name: API Support
+    email: support@example.com
+
+servers:
+  - url: http://localhost:8000
+    description: Local development server
+  - url: https://api.example.com
+    description: Production server
+
+tags:
+  - name: todos
+    description: Todo CRUD operations
+
+security:
+  - BearerAuth: []
+
+paths:
+  /todos:
+    get:
+      tags:
+        - todos
+      summary: List all todos for authenticated user
+      description: |
+        Retrieve all todos belonging to the authenticated user.
+        Supports optional filtering by completion status and text search.
+      operationId: listTodos
+      parameters:
+        - name: completed
+          in: query
+          description: Filter by completion status
+          required: false
+          schema:
+            type: boolean
+          example: false
+        - name: search
+          in: query
+          description: Search in title and description (case-insensitive)
+          required: false
+          schema:
+            type: string
+            minLength: 1
+            maxLength: 100
+          example: "meeting"
+      responses:
+        '200':
+          description: List of todos
+          content:
+            application/json:
+              schema:
+                type: array
+                items:
+                  $ref: '#/components/schemas/TodoResponse'
+              examples:
+                empty:
+                  summary: No todos
+                  value: []
+                withTodos:
+                  summary: User has todos
+                  value:
+                    - id: "550e8400-e29b-41d4-a716-446655440000"
+                      user_id: "user-123"
+                      title: "Buy groceries"
+                      description: "Milk, eggs, bread"
+                      completed: false
+                      created_at: "2026-02-09T10:30:00Z"
+                      updated_at: "2026-02-09T10:30:00Z"
+                    - id: "660e8400-e29b-41d4-a716-446655440001"
+                      user_id: "user-123"
+                      title: "Finish project"
+                      description: "Complete backend API"
+                      completed: true
+                      created_at: "2026-02-08T14:20:00Z"
+                      updated_at: "2026-02-09T09:15:00Z"
+        '401':
+          $ref: '#/components/responses/UnauthorizedError'
+        '500':
+          $ref: '#/components/responses/ServerError'
+
+    post:
+      tags:
+        - todos
+      summary: Create a new todo
+      description: Create a new todo item for the authenticated user
+      operationId: createTodo
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/TodoCreate'
+            examples:
+              minimal:
+                summary: Minimal todo (title only)
+                value:
+                  title: "Buy groceries"
+              complete:
+                summary: Todo with description
+                value:
+                  title: "Finish project"
+                  description: "Complete FastAPI backend implementation"
+      responses:
+        '201':
+          description: Todo created successfully
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/TodoResponse'
+              example:
+                id: "550e8400-e29b-41d4-a716-446655440000"
+                user_id: "user-123"
+                title: "Buy groceries"
+                description: ""
+                completed: false
+                created_at: "2026-02-09T10:30:00Z"
+                updated_at: "2026-02-09T10:30:00Z"
+        '400':
+          $ref: '#/components/responses/BadRequestError'
+        '401':
+          $ref: '#/components/responses/UnauthorizedError'
+        '422':
+          $ref: '#/components/responses/ValidationError'
+        '500':
+          $ref: '#/components/responses/ServerError'
+
+  /todos/{id}:
+    get:
+      tags:
+        - todos
+      summary: Get a specific todo
+      description: Retrieve a single todo by ID. Returns 404 if not found or not owned by user.
+      operationId: getTodo
+      parameters:
+        - name: id
+          in: path
+          description: Todo ID (UUID)
+          required: true
+          schema:
+            type: string
+            format: uuid
+          example: "550e8400-e29b-41d4-a716-446655440000"
+      responses:
+        '200':
+          description: Todo found
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/TodoResponse'
+              example:
+                id: "550e8400-e29b-41d4-a716-446655440000"
+                user_id: "user-123"
+                title: "Buy groceries"
+                description: "Milk, eggs, bread"
+                completed: false
+                created_at: "2026-02-09T10:30:00Z"
+                updated_at: "2026-02-09T10:30:00Z"
+        '401':
+          $ref: '#/components/responses/UnauthorizedError'
+        '404':
+          $ref: '#/components/responses/NotFoundError'
+        '500':
+          $ref: '#/components/responses/ServerError'
+
+    put:
+      tags:
+        - todos
+      summary: Update a todo
+      description: |
+        Update an existing todo. All fields in the request body will be updated.
+        Returns 404 if not found or not owned by user.
+      operationId: updateTodo
+      parameters:
+        - name: id
+          in: path
+          description: Todo ID (UUID)
+          required: true
+          schema:
+            type: string
+            format: uuid
+          example: "550e8400-e29b-41d4-a716-446655440000"
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/TodoUpdate'
+            examples:
+              updateTitle:
+                summary: Update title only
+                value:
+                  title: "Buy groceries and cook dinner"
+              markComplete:
+                summary: Mark as completed
+                value:
+                  completed: true
+              fullUpdate:
+                summary: Update all fields
+                value:
+                  title: "Buy groceries"
+                  description: "Milk, eggs, bread, vegetables"
+                  completed: true
+      responses:
+        '200':
+          description: Todo updated successfully
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/TodoResponse'
+              example:
+                id: "550e8400-e29b-41d4-a716-446655440000"
+                user_id: "user-123"
+                title: "Buy groceries and cook dinner"
+                description: "Milk, eggs, bread"
+                completed: false
+                created_at: "2026-02-09T10:30:00Z"
+                updated_at: "2026-02-09T15:45:00Z"
+        '400':
+          $ref: '#/components/responses/BadRequestError'
+        '401':
+          $ref: '#/components/responses/UnauthorizedError'
+        '404':
+          $ref: '#/components/responses/NotFoundError'
+        '422':
+          $ref: '#/components/responses/ValidationError'
+        '500':
+          $ref: '#/components/responses/ServerError'
+
+    delete:
+      tags:
+        - todos
+      summary: Delete a todo
+      description: |
+        Delete a todo permanently. Returns 404 if not found or not owned by user.
+        This operation cannot be undone.
+      operationId: deleteTodo
+      parameters:
+        - name: id
+          in: path
+          description: Todo ID (UUID)
+          required: true
+          schema:
+            type: string
+            format: uuid
+          example: "550e8400-e29b-41d4-a716-446655440000"
+      responses:
+        '204':
+          description: Todo deleted successfully (no content)
+        '401':
+          $ref: '#/components/responses/UnauthorizedError'
+        '404':
+          $ref: '#/components/responses/NotFoundError'
+        '500':
+          $ref: '#/components/responses/ServerError'
+
+components:
+  securitySchemes:
+    BearerAuth:
+      type: http
+      scheme: bearer
+      bearerFormat: JWT
+      description: |
+        JWT token issued by Better Auth.
+        Include in Authorization header: `Bearer <token>`
+
+  schemas:
+    TodoCreate:
+      type: object
+      required:
+        - title
+      properties:
+        title:
+          type: string
+          minLength: 1
+          maxLength: 200
+          description: Todo title (required, 1-200 characters)
+          example: "Buy groceries"
+        description:
+          type: string
+          maxLength: 1000
+          default: ""
+          description: Optional todo description (0-1000 characters)
+          example: "Milk, eggs, bread, and vegetables"
+
+    TodoUpdate:
+      type: object
+      properties:
+        title:
+          type: string
+          minLength: 1
+          maxLength: 200
+          description: Updated todo title
+          example: "Buy groceries and cook dinner"
+        description:
+          type: string
+          maxLength: 1000
+          description: Updated todo description
+          example: "Milk, eggs, bread, vegetables, and chicken"
+        completed:
+          type: boolean
+          description: Updated completion status
+          example: true
+
+    TodoResponse:
+      type: object
+      required:
+        - id
+        - user_id
+        - title
+        - description
+        - completed
+        - created_at
+        - updated_at
+      properties:
+        id:
+          type: string
+          format: uuid
+          description: Unique todo identifier (UUID v4)
+          example: "550e8400-e29b-41d4-a716-446655440000"
+        user_id:
+          type: string
+          description: User identifier from JWT token
+          example: "user-123-abc"
+        title:
+          type: string
+          minLength: 1
+          maxLength: 200
+          description: Todo title
+          example: "Buy groceries"
+        description:
+          type: string
+          maxLength: 1000
+          description: Todo description
+          example: "Milk, eggs, bread"
+        completed:
+          type: boolean
+          description: Completion status
+          example: false
+        created_at:
+          type: string
+          format: date-time
+          description: Creation timestamp (ISO 8601, UTC)
+          example: "2026-02-09T10:30:00Z"
+        updated_at:
+          type: string
+          format: date-time
+          description: Last update timestamp (ISO 8601, UTC)
+          example: "2026-02-09T15:45:00Z"
+
+    Error:
+      type: object
+      required:
+        - error
+      properties:
+        error:
+          type: object
+          required:
+            - code
+            - message
+          properties:
+            code:
+              type: string
+              description: Machine-readable error code
+              example: "VALIDATION_ERROR"
+            message:
+              type: string
+              description: Human-readable error message
+              example: "Invalid input data"
+            details:
+              type: object
+              description: Additional error details (optional)
+              additionalProperties: true
+              example:
+                title: "Field required"
+
+  responses:
+    BadRequestError:
+      description: Bad request (malformed JSON or invalid parameters)
+      content:
+        application/json:
+          schema:
+            $ref: '#/components/schemas/Error'
+          example:
+            error:
+              code: "BAD_REQUEST"
+              message: "Invalid request format"
+
+    UnauthorizedError:
+      description: Unauthorized (missing, invalid, or expired JWT token)
+      content:
+        application/json:
+          schema:
+            $ref: '#/components/schemas/Error'
+          example:
+            error:
+              code: "UNAUTHORIZED"
+              message: "Invalid or expired authentication token"
+
+    NotFoundError:
+      description: Todo not found or not owned by authenticated user
+      content:
+        application/json:
+          schema:
+            $ref: '#/components/schemas/Error'
+          example:
+            error:
+              code: "NOT_FOUND"
+              message: "Todo not found"
+
+    ValidationError:
+      description: Validation error (invalid field values)
+      content:
+        application/json:
+          schema:
+            $ref: '#/components/schemas/Error'
+          example:
+            error:
+              code: "VALIDATION_ERROR"
+              message: "Invalid input data"
+              details:
+                title: "String should have at least 1 character"
+
+    ServerError:
+      description: Internal server error
+      content:
+        application/json:
+          schema:
+            $ref: '#/components/schemas/Error'
+          example:
+            error:
+              code: "SERVER_ERROR"
+              message: "An unexpected error occurred"
