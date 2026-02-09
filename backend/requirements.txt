@@ -8,6 +8,7 @@ python-multipart==0.0.6
 # Database
 sqlmodel==0.0.14
 aiosqlite==0.20.0
+asyncpg==0.31.0
 
 # Authentication
 python-jose[cryptography]==3.3.0
