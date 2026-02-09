@@ -1,0 +1,21 @@
+{
+  "permissions": {
+    "allow": [
+      "Bash(git fetch --all --prune)",
+      "Bash(powershell.exe:*)",
+      "Bash(if:*)",
+      "Bash(then echo \"Directory exists\")",
+      "Bash(else echo \"Directory not found\")",
+      "Bash(fi)",
+      "Bash(then echo:*)",
+      "Bash(else echo \"Prompts directory not found\")",
+      "Bash(npx create-next-app@latest:*)",
+      "Bash(npm install next@latest react@latest react-dom@latest typescript @types/react @types/node better-auth)",
+      "Bash(npm install:*)",
+      "Bash(npm run dev)",
+      "Bash(findstr:*)",
+      "Bash(git checkout --orphan clean-branch)",
+      "Bash(git add:*)"
+    ]
+  }
+}
