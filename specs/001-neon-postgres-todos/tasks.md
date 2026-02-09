@@ -125,16 +125,16 @@
 
 **Purpose**: Improvements that affect multiple user stories and final validation
 
-- [ ] T042 [P] Update backend/README.md with Neon PostgreSQL setup instructions
-- [ ] T043 [P] Verify backend/.env.example has all required environment variables documented
-- [ ] T044 Verify all CRUD operations in backend/app/crud.py have proper error handling
-- [ ] T045 Verify all field validators in backend/app/models.py work correctly
-- [ ] T046 Run manual validation using backend/tests/test_todos.py to verify CRUD operations
-- [ ] T047 Run manual validation using backend/tests/test_isolation.py to verify user isolation
-- [ ] T048 Run manual validation using backend/tests/test_concurrent.py to verify concurrent operations
-- [ ] T049 Verify database schema created successfully with all indexes (user_id, composite)
-- [ ] T050 Verify query performance meets <100ms target for 1000 tasks per user
-- [ ] T051 Run quickstart.md validation steps to ensure setup guide is accurate
+- [x] T042 [P] Update backend/README.md with Neon PostgreSQL setup instructions
+- [x] T043 [P] Verify backend/.env.example has all required environment variables documented
+- [x] T044 Verify all CRUD operations in backend/app/crud.py have proper error handling
+- [x] T045 Verify all field validators in backend/app/models.py work correctly
+- [ ] T046 Run manual validation using backend/tests/test_todos.py to verify CRUD operations (requires Neon database connection)
+- [ ] T047 Run manual validation using backend/tests/test_isolation.py to verify user isolation (requires Neon database connection)
+- [ ] T048 Run manual validation using backend/tests/test_concurrent.py to verify concurrent operations (requires Neon database connection)
+- [ ] T049 Verify database schema created successfully with all indexes (user_id, composite) (requires Neon database connection)
+- [ ] T050 Verify query performance meets <100ms target for 1000 tasks per user (requires Neon database connection)
+- [ ] T051 Run quickstart.md validation steps to ensure setup guide is accurate (requires Neon database connection)
 
 **Checkpoint**: All polish tasks complete, system ready for integration with API layer
 
