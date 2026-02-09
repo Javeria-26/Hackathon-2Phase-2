@@ -25,10 +25,10 @@
 
 **Purpose**: Project initialization and dependency management
 
-- [ ] T001 Add asyncpg==0.29.0 to backend/requirements.txt for PostgreSQL async driver
-- [ ] T002 Install dependencies from backend/requirements.txt using pip
-- [ ] T003 Create backend/.env.example with Neon PostgreSQL connection string template
-- [ ] T004 Update backend/.env with actual Neon DATABASE_URL (postgresql+asyncpg://...)
+- [x] T001 Add asyncpg==0.29.0 to backend/requirements.txt for PostgreSQL async driver (updated to 0.31.0 for Python 3.13)
+- [x] T002 Install dependencies from backend/requirements.txt using pip
+- [x] T003 Create backend/.env.example with Neon PostgreSQL connection string template
+- [x] T004 Update backend/.env with actual Neon DATABASE_URL (postgresql+asyncpg://...)
 
 **Checkpoint**: Dependencies installed, environment configured
 
@@ -40,12 +40,12 @@
 
 **⚠️ CRITICAL**: No user story work can begin until this phase is complete
 
-- [ ] T005 Update backend/app/config.py to load DATABASE_URL from environment
-- [ ] T006 Update backend/app/database.py with Neon-specific connection pooling (pool_size=5, max_overflow=10, pool_pre_ping=True, pool_recycle=3600)
-- [ ] T007 Update backend/app/database.py to use postgresql+asyncpg:// connection string with SSL
-- [ ] T008 Verify backend/app/database.py async session factory and get_session() dependency
-- [ ] T009 Verify backend/app/database.py create_db_and_tables() function for schema creation
-- [ ] T010 Update backend/app/main.py startup event to call create_db_and_tables()
+- [x] T005 Update backend/app/config.py to load DATABASE_URL from environment
+- [x] T006 Update backend/app/database.py with Neon-specific connection pooling (pool_size=5, max_overflow=10, pool_pre_ping=True, pool_recycle=3600)
+- [x] T007 Update backend/app/database.py to use postgresql+asyncpg:// connection string with SSL
+- [x] T008 Verify backend/app/database.py async session factory and get_session() dependency
+- [x] T009 Verify backend/app/database.py create_db_and_tables() function for schema creation
+- [x] T010 Update backend/app/main.py startup event to call create_db_and_tables()
 
 **Checkpoint**: Foundation ready - Neon PostgreSQL connection established, session management configured, schema creation ready
 
@@ -59,22 +59,22 @@
 
 ### Implementation for User Story 1
 
-- [ ] T011 [P] [US1] Update Todo model in backend/app/models.py with UUID primary key (id field with uuid.uuid4() default_factory)
-- [ ] T012 [P] [US1] Update Todo model in backend/app/models.py with user_id field (indexed, nullable=False)
-- [ ] T013 [P] [US1] Update Todo model in backend/app/models.py with title field (min_length=1, max_length=500, nullable=False)
-- [ ] T014 [P] [US1] Update Todo model in backend/app/models.py with description field (default="", max_length=5000)
-- [ ] T015 [P] [US1] Update Todo model in backend/app/models.py with completed field (default=False, nullable=False)
-- [ ] T016 [P] [US1] Update Todo model in backend/app/models.py with created_at and updated_at timestamp fields
-- [ ] T017 [US1] Add field validator to Todo model in backend/app/models.py for title (not empty, strip whitespace)
-- [ ] T018 [US1] Add field validator to Todo model in backend/app/models.py for description (strip whitespace)
-- [ ] T019 [US1] Implement create_todo() function in backend/app/crud.py with user_id parameter
-- [ ] T020 [US1] Implement get_todos() function in backend/app/crud.py with user_id, skip, limit parameters (ordered by created_at DESC)
-- [ ] T021 [US1] Implement get_todo() function in backend/app/crud.py with user_id and todo_id parameters
-- [ ] T022 [US1] Implement update_todo() function in backend/app/crud.py with user_id, todo_id, and todo_data parameters
-- [ ] T023 [US1] Implement delete_todo() function in backend/app/crud.py with user_id and todo_id parameters
-- [ ] T024 [US1] Implement mark_complete() helper function in backend/app/crud.py with user_id, todo_id, completed parameters
-- [ ] T025 [US1] Add error handling for database connection failures in backend/app/crud.py
-- [ ] T026 [US1] Add error handling for validation errors in backend/app/crud.py
+- [x] T011 [P] [US1] Update Todo model in backend/app/models.py with UUID primary key (id field with uuid.uuid4() default_factory)
+- [x] T012 [P] [US1] Update Todo model in backend/app/models.py with user_id field (indexed, nullable=False)
+- [x] T013 [P] [US1] Update Todo model in backend/app/models.py with title field (min_length=1, max_length=500, nullable=False)
+- [x] T014 [P] [US1] Update Todo model in backend/app/models.py with description field (default="", max_length=5000)
+- [x] T015 [P] [US1] Update Todo model in backend/app/models.py with completed field (default=False, nullable=False)
+- [x] T016 [P] [US1] Update Todo model in backend/app/models.py with created_at and updated_at timestamp fields
+- [x] T017 [US1] Add field validator to Todo model in backend/app/models.py for title (not empty, strip whitespace)
+- [x] T018 [US1] Add field validator to Todo model in backend/app/models.py for description (strip whitespace)
+- [x] T019 [US1] Implement create_todo() function in backend/app/crud.py with user_id parameter
+- [x] T020 [US1] Implement get_todos() function in backend/app/crud.py with user_id, skip, limit parameters (ordered by created_at DESC)
+- [x] T021 [US1] Implement get_todo() function in backend/app/crud.py with user_id and todo_id parameters
+- [x] T022 [US1] Implement update_todo() function in backend/app/crud.py with user_id, todo_id, and todo_data parameters
+- [x] T023 [US1] Implement delete_todo() function in backend/app/crud.py with user_id and todo_id parameters
+- [x] T024 [US1] Implement mark_complete() helper function in backend/app/crud.py with user_id, todo_id, completed parameters
+- [x] T025 [US1] Add error handling for database connection failures in backend/app/crud.py
+- [x] T026 [US1] Add error handling for validation errors in backend/app/crud.py
 
 **Checkpoint**: User Story 1 complete - CRUD operations work, tasks persist across connection cycles
 
@@ -88,14 +88,14 @@
 
 ### Implementation for User Story 2
 
-- [ ] T027 [US2] Verify create_todo() in backend/app/crud.py filters by user_id (sets user_id on new task)
-- [ ] T028 [US2] Verify get_todos() in backend/app/crud.py filters by user_id (WHERE user_id = ?)
-- [ ] T029 [US2] Verify get_todo() in backend/app/crud.py filters by both id AND user_id
-- [ ] T030 [US2] Verify update_todo() in backend/app/crud.py filters by both id AND user_id (returns None if not owned)
-- [ ] T031 [US2] Verify delete_todo() in backend/app/crud.py filters by both id AND user_id (returns False if not owned)
-- [ ] T032 [US2] Verify mark_complete() in backend/app/crud.py filters by both id AND user_id
-- [ ] T033 [US2] Add user_id validation in backend/app/crud.py (ensure user_id is not None or empty)
-- [ ] T034 [US2] Update backend/app/models.py to add composite index on (user_id, created_at) for optimized queries
+- [x] T027 [US2] Verify create_todo() in backend/app/crud.py filters by user_id (sets user_id on new task)
+- [x] T028 [US2] Verify get_todos() in backend/app/crud.py filters by user_id (WHERE user_id = ?)
+- [x] T029 [US2] Verify get_todo() in backend/app/crud.py filters by both id AND user_id
+- [x] T030 [US2] Verify update_todo() in backend/app/crud.py filters by both id AND user_id (returns None if not owned)
+- [x] T031 [US2] Verify delete_todo() in backend/app/crud.py filters by both id AND user_id (returns False if not owned)
+- [x] T032 [US2] Verify mark_complete() in backend/app/crud.py filters by both id AND user_id
+- [x] T033 [US2] Add user_id validation in backend/app/crud.py (ensure user_id is not None or empty)
+- [x] T034 [US2] Update backend/app/models.py to add composite index on (user_id, created_at) for optimized queries
 
 **Checkpoint**: User Story 2 complete - All operations enforce user isolation, zero cross-user data access possible
 
@@ -109,12 +109,12 @@
 
 ### Implementation for User Story 3
 
-- [ ] T035 [US3] Verify connection pooling parameters in backend/app/database.py support concurrent operations (pool_size=5, max_overflow=10)
-- [ ] T036 [US3] Verify pool_pre_ping=True in backend/app/database.py to detect stale connections
-- [ ] T037 [US3] Verify pool_recycle=3600 in backend/app/database.py to prevent idle connection timeouts
-- [ ] T038 [US3] Add connection retry logic in backend/app/database.py for transient failures
-- [ ] T039 [US3] Verify PostgreSQL isolation level (READ COMMITTED) is appropriate for concurrent operations
-- [ ] T040 [US3] Add connection timeout handling in backend/app/database.py
+- [x] T035 [US3] Verify connection pooling parameters in backend/app/database.py support concurrent operations (pool_size=5, max_overflow=10)
+- [x] T036 [US3] Verify pool_pre_ping=True in backend/app/database.py to detect stale connections
+- [x] T037 [US3] Verify pool_recycle=3600 in backend/app/database.py to prevent idle connection timeouts
+- [x] T038 [US3] Add connection retry logic in backend/app/database.py for transient failures
+- [x] T039 [US3] Verify PostgreSQL isolation level (READ COMMITTED) is appropriate for concurrent operations
+- [x] T040 [US3] Add connection timeout handling in backend/app/database.py
 - [ ] T041 [US3] Create backend/tests/test_concurrent.py for concurrent operation validation (manual testing)
 
 **Checkpoint**: User Story 3 complete - System handles 100+ concurrent operations without corruption

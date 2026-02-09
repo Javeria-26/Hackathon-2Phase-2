@@ -7,8 +7,8 @@ import uuid
 
 class TodoBase(SQLModel):
     """Base model for Todo with shared fields."""
-    title: str = Field(min_length=1, max_length=200)
-    description: str = Field(default="", max_length=1000)
+    title: str = Field(min_length=1, max_length=500)
+    description: str = Field(default="", max_length=5000)
     completed: bool = Field(default=False)
 
     @field_validator('title')
@@ -46,8 +46,8 @@ class TodoCreate(TodoBase):
 
 class TodoUpdate(SQLModel):
     """Schema for updating a todo (all fields optional)."""
-    title: Optional[str] = Field(None, min_length=1, max_length=200)
-    description: Optional[str] = Field(None, max_length=1000)
+    title: Optional[str] = Field(None, min_length=1, max_length=500)
+    description: Optional[str] = Field(None, max_length=5000)
     completed: Optional[bool] = None
 
     @field_validator('title')
